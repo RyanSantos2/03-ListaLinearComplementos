@@ -33,16 +33,80 @@ Nesta atividade, trabalharemos com uma **lista linear sequencial** (também cham
 
 ---
 
-## 3) Evitando duplicação com `posicaoElemento(int valor)`
+## 3) Passagem de Parâmetros e Retorno de Função em C++
+
+Antes de implementar `posicaoElemento()`, é importante compreender como **parâmetros** e **retorno** funcionam em C++. Esse conhecimento é fundamental para escrever funções corretas e reutilizáveis.
+
+### 3.1) Passagem de Parâmetros
+
+Ao chamar uma função e passar um argumento, o C++ oferece duas modalidades principais:
+
+| Modalidade | Sintaxe | O que acontece |
+|---|---|---|
+| **Por valor** | `void f(int x)` | Uma **cópia** do argumento é criada. Alterações em `x` dentro da função **não** afetam a variável original. |
+| **Por referência** | `void f(int &x)` | A função recebe um **apelido** para a variável original. Alterações em `x` **afetam** o original. |
+
+**Exemplo:**
+```cpp
+void dobraValor(int x) {     // por valor — não altera o original
+    x = x * 2;
+}
+
+void dobraRef(int &x) {      // por referência — altera o original
+    x = x * 2;
+}
+
+int main() {
+    int a = 5;
+    dobraValor(a);  // a continua 5
+    dobraRef(a);    // a passa a ser 10
+}
+```
+
+### 3.2) Retorno de Função
+
+Uma função pode **devolver** um valor ao código que a chamou usando a palavra-chave `return`. O tipo do valor retornado deve coincidir com o tipo declarado na assinatura da função.
+
+```cpp
+int soma(int a, int b) {
+    return a + b;   // devolve um int ao chamador
+}
+
+int resultado = soma(3, 4);  // resultado == 7
+```
+
+> **Atenção**: ao executar `return`, a função encerra imediatamente e o controle volta ao ponto da chamada. Qualquer código após o `return` **não** é executado.
+
+### 3.3) Aplicando à `posicaoElemento(int valor)`
+
+A função recebe **por valor** o inteiro `valor` que se deseja buscar — não precisa modificar a variável original, apenas consultá-la. Ela percorre o array `lista[]` e **retorna** o índice (`int`) da primeira ocorrência, ou `-1` caso o valor não exista:
+
+```cpp
+int posicaoElemento(int valor) {
+    for (int i = 0; i < nElementos; i++) {
+        if (lista[i] == valor) {
+            return i;   // encontrou: devolve o índice imediatamente
+        }
+    }
+    return -1;          // não encontrou: sinal de "ausente"
+}
+```
+
+> **Por que retornar `int` e não `bool`?**
+> Retornar o **índice** permite que o chamador saiba exatamente **onde** o elemento está — útil tanto para exibir a posição (`buscarElemento`) quanto para iniciar o deslocamento de remoção (`excluirElemento`), sem necessidade de uma segunda busca.
+
+---
+
+## 4) Evitando duplicação com `posicaoElemento(int valor)`
 
 A busca por um valor aparece em vários pontos do programa (ex.: **buscar** e **excluir**). Para **não duplicar código**, utilizamos uma **função utilitária** que centraliza a busca:
 
-### 3.1) Assinatura (já fornecida no projeto)
+### 4.1) Assinatura (já fornecida no projeto)
 ```cpp
 int posicaoElemento(int valor);
 ```
 
-### 3.2) Responsabilidade
+### 4.2) Responsabilidade
 - Percorrer as posições válidas (`0` a `nElementos-1`) da lista;
 - **Retornar o índice** da **primeira ocorrência** do valor buscado;
 - **Retornar `-1`** caso o valor **não** esteja presente na lista.
@@ -53,7 +117,7 @@ int posicaoElemento(int valor);
 
 ---
 
-## 4) Implementando `excluirElemento()`
+## 5) Implementando `excluirElemento()`
 
 - **Ler do usuário** o número a ser excluído;
 - **Buscar** o número na lista usando **`posicaoElemento(valor)`**;
@@ -63,7 +127,7 @@ int posicaoElemento(int valor);
 
 ---
 
-## 5) Interações com o menu
+## 6) Interações com o menu
 
 - A função `excluirElemento()` deve ser chamada pela opção **6 – Excluir elemento** do menu.  
 - A função `buscarElemento()` (opção 4) também deve usar **`posicaoElemento()`** — evite repetir um laço de busca ali.
@@ -87,7 +151,7 @@ void buscarElemento() {
 
 ---
 
-## 6) Casos de teste sugeridos
+## 7) Casos de teste sugeridos
 
 1. **Excluir em lista vazia**: opção 6 sem inserir nada → deve avisar que está vazia.  
 2. **Excluir elemento inexistente**: insira `[3, 7, 9]`, tente excluir `5` → `"elemento nao encontrado"`.  
@@ -99,18 +163,28 @@ void buscarElemento() {
 
 ---
 
-## 7) Análise de complexidade
+## 8) Referências Complementares
 
-- **Busca (`posicaoElemento`)**: `O(n)` no pior caso (precisa varrer a lista inteira).  
-- **Exclusão**: `O(n)` devido ao deslocamento após a posição removida.  
-- **Espaço adicional**: `O(1)` — operação feita *in place* no array.
+### Livros
 
-> Em listas **encadeadas**, a exclusão pode ser feita sem deslocamento, mas a busca continua `O(n)` se a lista não for ordenada.
+- **Deitel, P. & Deitel, H.** — *C++: Como Programar* (14ª ed.). Pearson. Os capítulos sobre funções (Cap. 6) e arrays (Cap. 7) cobrem passagem de parâmetros e manipulação de vetores com profundidade.
+- **Ziviani, N.** — *Projeto de Algoritmos com Implementações em Pascal e C* (3ª ed.). Cengage. O Capítulo 3 trata especificamente de listas lineares sequenciais e encadeadas.
+- **Cormen, T. H. et al.** — *Introdução a Algoritmos* (3ª ed.). MIT Press / GEN-LTC. Referência clássica para análise de estruturas de dados e algoritmos.
+
+### Sites e Documentação
+
+- [cppreference.com — Functions](https://en.cppreference.com/w/cpp/language/functions): documentação completa sobre declaração, passagem de parâmetros e tipos de retorno em C++.
+- [cplusplus.com — Arrays](https://cplusplus.com/doc/tutorial/arrays/): tutorial sobre arrays unidimensionais em C++.
+- [GeeksforGeeks — Linear Search](https://www.geeksforgeeks.org/linear-search/): explicação e exemplos de busca linear com análise passo a passo.
+- [Visualgo.net — List](https://visualgo.net/en/list): visualização animada de operações em listas lineares (inserção, remoção, busca).
+
+### Vídeos
+
+- Pesquise no YouTube por **"lista sequencial C++ estrutura de dados"** e **"passagem de parâmetros C++ por valor e referência"** para encontrar videoaulas em português alinhadas ao conteúdo desta disciplina.
 
 ---
 
-
-## 8) Checklist para entrega
+## 9) Checklist para entrega
 
 - [ ] `excluirElemento()` implementada conforme especificação.  
 - [ ] `posicaoElemento()` retorna **a primeira ocorrência** e é **utilizada** por `excluirElemento()` e `buscarElemento()`.  
